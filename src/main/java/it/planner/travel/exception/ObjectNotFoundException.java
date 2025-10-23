@@ -34,13 +34,6 @@ public class ObjectNotFoundException extends BaseException {
                 null);
     }
 
-    // Costruttore specifico per Author con nome e cognome
-    public static ObjectNotFoundException forAuthor(String firstName, String lastName) {
-        return new ObjectNotFoundException(
-                "Author",
-                "name",
-                firstName + " " + lastName);
-    }
 
     public static ObjectNotFoundException forAuthorLastName(String lastName) {
         return new ObjectNotFoundException(
