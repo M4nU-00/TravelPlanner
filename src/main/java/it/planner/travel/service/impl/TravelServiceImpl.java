@@ -27,12 +27,14 @@ public class TravelServiceImpl implements TravelService {
     // ModelMapper
     private final ModelMapper modelMapper;
 
+    @Override
     public TravelResponseDto createTravel(TravelRequestDto travelRequestDto) {
         return modelMapper
                 .map(insert(modelMapper
                         .map(travelRequestDto, Travel.class)), TravelResponseDto.class);
     }
 
+    @Override
     public TravelResponseDto findByUuid(UUID uuid) throws BaseException {
         TravelResponseDto travelResponseDto = modelMapper
                 .map(travelRepository.findByUuidAndDeleteDateIsNull(uuid)
@@ -41,6 +43,7 @@ public class TravelServiceImpl implements TravelService {
         return travelResponseDto;
     }
 
+    @Override
     public List<TravelResponseDto> findAll() {
         return travelRepository.findAllByDeleteDateIsNull()
                 .stream()
@@ -64,6 +67,7 @@ public class TravelServiceImpl implements TravelService {
         return modelMapper.map(insert(travel), TravelResponseDto.class);
     }
 
+    @Override
     public void deleteTravel(UUID uuid) throws BaseException {
         Travel travel = modelMapper.map(findByUuid(uuid), Travel.class);
         travel.softDelete();

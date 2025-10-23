@@ -2,7 +2,6 @@ package it.planner.travel.domain.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -28,11 +27,11 @@ import lombok.NoArgsConstructor;
 @Table(name = "trip_stop")
 public class TripStop extends BaseEntity {
 
-    @Column(name = "uuid_city")
-    private UUID uuidCity;
+    @Column(name = "name_city")
+    private String nameCity;
 
     @ManyToOne
-    @JoinColumn(name = "uuid_travel")
+    @JoinColumn(name = "travel_uuid")
     @JsonIgnore
     private Travel travel;
 

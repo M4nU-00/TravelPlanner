@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 public class InterestPoint extends BaseEntity {
 
     @ManyToOne
-    @JoinColumn(name = "uuid_trip_stop")
+    @JoinColumn(name = "trip_stop_uuid")
     @JsonIgnore
     private TripStop tripStop;
 
