@@ -1,5 +1,6 @@
 package it.planner.travel.domain.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class TripStop extends BaseEntity {
     private String name;
 
     @Column(name = "trip_stop_date")
-    private LocalDateTime tripStopDate;
+    private LocalDate tripStopDate;
 
     @Column(name = "note")
     private String note;

@@ -1,5 +1,6 @@
 package it.planner.travel.domain.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,10 +32,10 @@ public class Travel extends BaseEntity {
     private String name;
 
     @Column(name = "start_date")
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     @Column(name = "end_date")
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     @OneToMany(mappedBy = "travel")
     @JsonIgnore
