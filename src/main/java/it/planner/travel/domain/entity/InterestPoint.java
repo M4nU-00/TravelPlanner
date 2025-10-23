@@ -1,14 +1,12 @@
 package it.planner.travel.domain.entity;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import it.planner.travel.domain.entity.base.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,19 +20,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @EqualsAndHashCode(callSuper = false)
 @Entity
-@Table(name = "travel")
-public class Travel extends BaseEntity {
+@Table(name = "interest_point")
+public class InterestPoint extends BaseEntity {
+
+    @ManyToOne
+    @JoinColumn(name = "uuid_trip_stop")
+    @JsonIgnore
+    private TripStop tripStop;
 
     @Column(name = "name")
     private String name;
 
-    @Column(name = "start_date")
-    private LocalDateTime startDate;
-
-    @Column(name = "end_date")
-    private LocalDateTime endDate;
-
-    @OneToMany(mappedBy = "travel")
-    @JsonIgnore
-    List<TripStop> tripStopList;
 }
