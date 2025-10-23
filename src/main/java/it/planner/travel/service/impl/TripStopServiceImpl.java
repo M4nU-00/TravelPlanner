@@ -108,7 +108,7 @@ public class TripStopServiceImpl implements TripStopService {
     // Metodi Private
     private TripStop insert(TripStop TripStop) {
         TripStop = tripStopRepository.save(TripStop);
-        log.info("Inserimento nuovo viaggio {}", TripStop);
+        log.info("Inserimento nuova tappa {}", TripStop);
         return TripStop;
     }
 

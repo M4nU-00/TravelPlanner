@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.planner.travel.domain.dto.request.TravelRequestDto;
+import it.planner.travel.domain.dto.response.TravelFullResponseDto;
 import it.planner.travel.domain.dto.response.TravelResponseDto;
 import it.planner.travel.exception.base.BaseException;
 import it.planner.travel.service.TravelService;
@@ -37,7 +38,7 @@ public class TravelController {
     }
 
     @GetMapping
-    public List<TravelResponseDto> getAllTravels() {
+    public List<TravelFullResponseDto> getAllTravels() {
         return travelService.findAll();
     }
 

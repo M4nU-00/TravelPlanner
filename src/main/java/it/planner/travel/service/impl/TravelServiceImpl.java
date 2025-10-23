@@ -1,5 +1,6 @@
 package it.planner.travel.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -7,8 +8,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import it.planner.travel.domain.dto.request.TravelRequestDto;
+import it.planner.travel.domain.dto.response.InterestPointResponseDto;
+import it.planner.travel.domain.dto.response.TravelFullResponseDto;
 import it.planner.travel.domain.dto.response.TravelResponseDto;
+import it.planner.travel.domain.dto.response.TripStopResponseDto;
+import it.planner.travel.domain.entity.InterestPoint;
 import it.planner.travel.domain.entity.Travel;
+import it.planner.travel.domain.entity.TripStop;
 import it.planner.travel.exception.ObjectNotFoundException;
 import it.planner.travel.exception.base.BaseException;
 import it.planner.travel.repository.TravelRepository;
@@ -44,13 +50,45 @@ public class TravelServiceImpl implements TravelService {
     }
 
     @Override
-    public List<TravelResponseDto> findAll() {
-        return travelRepository.findAllByDeleteDateIsNull()
-                .stream()
-                .map(ithTravelResponseDto -> {
-                    return modelMapper
-                            .map(ithTravelResponseDto, TravelResponseDto.class);
-                }).toList();
+    public List<TravelFullResponseDto> findAll() {
+        List<Travel> travels = travelRepository.findAllByDeleteDateIsNull();
+        List<TravelFullResponseDto> travelFullResponseDtos = new ArrayList<>();
+
+        for (Travel ithTravel : travels) {
+            TravelFullResponseDto travelFullResponseDto = new TravelFullResponseDto();
+            travelFullResponseDto.setName(ithTravel.getName());
+            travelFullResponseDto.setStartDate(ithTravel.getStartDate());
+            travelFullResponseDto.setEndDate(ithTravel.getEndDate());
+            travelFullResponseDto.setUuid(ithTravel.getUuid());
+
+            List<TripStopResponseDto> tripStopResponseDtos = new ArrayList<>();
+
+            for (TripStop ithTripStop : ithTravel.getTripStopList()) {
+                TripStopResponseDto tripStopResponseDto = new TripStopResponseDto();
+                tripStopResponseDto.setNameCity(ithTripStop.getNameCity());
+                tripStopResponseDto.setNameTripStop(ithTripStop.getName());
+                tripStopResponseDto.setUuidTravel(ithTravel.getUuid());
+                tripStopResponseDto.setUuidTripStop(ithTripStop.getUuid());
+                tripStopResponseDto.setTripStopDate(ithTripStop.getTripStopDate());
+                tripStopResponseDto.setNote(ithTripStop.getNote());
+
+                List<InterestPointResponseDto> interestPointResponseDtos = new ArrayList<>();
+
+                for (InterestPoint ithInterestPoint : ithTripStop.getInterestPointList()) {
+                    InterestPointResponseDto interestPointResponseDto = new InterestPointResponseDto();
+                    interestPointResponseDto.setName(ithInterestPoint.getName());
+                    interestPointResponseDtos.add(interestPointResponseDto);
+                }
+
+                tripStopResponseDto.setInterestPointList(interestPointResponseDtos);
+                tripStopResponseDtos.add(tripStopResponseDto);
+            }
+
+            travelFullResponseDto.setTripStopResponseList(tripStopResponseDtos);
+            travelFullResponseDtos.add(travelFullResponseDto);
+        }
+
+        return travelFullResponseDtos;
     }
 
     @Override

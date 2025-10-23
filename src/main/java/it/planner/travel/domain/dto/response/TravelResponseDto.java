@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 @Builder
 public class TravelResponseDto {
-    
+
     private UUID uuid;
     private String name;
     private LocalDateTime startDate;

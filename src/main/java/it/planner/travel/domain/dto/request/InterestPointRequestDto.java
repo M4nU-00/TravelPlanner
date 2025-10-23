@@ -16,9 +16,6 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 public class InterestPointRequestDto {
 
-    @NotBlank(message = "uuidTravel must not be blank")
-    UUID uuidTravel;
-
     @NotBlank(message = "uuidTripStop must not be blank")
     UUID uuidTripStop;
 

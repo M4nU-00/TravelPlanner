@@ -13,16 +13,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Builder
 @EqualsAndHashCode
-public class TripStopResponseDto {
+@Builder
+public class TravelFullResponseDto {
+    
+    
+    private UUID uuid;
+    private String name;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 
-    UUID uuidTripStop;
-    String nameTripStop;
-    String nameCity;
-    LocalDateTime tripStopDate;
-    String note;
-    UUID uuidTravel;
-
-    List<InterestPointResponseDto> interestPointList;
+    private List<TripStopResponseDto> tripStopResponseList;
 }

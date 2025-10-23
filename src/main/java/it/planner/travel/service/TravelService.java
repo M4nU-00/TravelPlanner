@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import it.planner.travel.domain.dto.request.TravelRequestDto;
+import it.planner.travel.domain.dto.response.TravelFullResponseDto;
 import it.planner.travel.domain.dto.response.TravelResponseDto;
 import it.planner.travel.exception.base.BaseException;
 import jakarta.transaction.Transactional;
@@ -18,7 +19,7 @@ public interface TravelService {
 
     public TravelResponseDto findByUuid(UUID uuid) throws BaseException;
 
-    public List<TravelResponseDto> findAll();
+    public List<TravelFullResponseDto> findAll();
 
     public TravelResponseDto updateTravel(UUID uuid, TravelRequestDto travelRequestDto) throws BaseException;
 

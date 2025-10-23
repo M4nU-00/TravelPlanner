@@ -25,6 +25,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "travel")
 public class Travel extends BaseEntity {
 
+    // Aggiungere lo uuid user
+
     @Column(name = "name")
     private String name;
 
