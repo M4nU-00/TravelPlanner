@@ -15,7 +15,7 @@ import jakarta.transaction.Transactional;
 @Transactional
 public interface TravelService {
 
-    public TravelResponseDto createTravel(TravelRequestDto travelRequestDto);
+    public TravelResponseDto createTravel(TravelRequestDto travelRequestDto, String token);
 
     public TravelResponseDto findByUuid(UUID uuid) throws BaseException;
 

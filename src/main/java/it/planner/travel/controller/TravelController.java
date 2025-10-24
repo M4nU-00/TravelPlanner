@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,7 +20,6 @@ import it.planner.travel.exception.base.BaseException;
 import it.planner.travel.service.TravelService;
 import lombok.RequiredArgsConstructor;
 
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/travel")
@@ -28,8 +28,10 @@ public class TravelController {
     private final TravelService travelService;
 
     @PostMapping
-    public TravelResponseDto createTravel(@RequestBody TravelRequestDto travelRequestDto) {
-        return travelService.createTravel(travelRequestDto);
+    public TravelResponseDto createTravel(@RequestBody TravelRequestDto travelRequestDto,
+            @RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        return travelService.createTravel(travelRequestDto, token);
     }
 
     @GetMapping("/{uuid}")
@@ -44,7 +46,7 @@ public class TravelController {
 
     @PutMapping("/{uuid}")
     public TravelResponseDto updateTravel(@PathVariable UUID uuid,
-                                          @RequestBody TravelRequestDto travelRequestDto) throws BaseException {
+            @RequestBody TravelRequestDto travelRequestDto) throws BaseException {
         return travelService.updateTravel(uuid, travelRequestDto);
     }
 

@@ -2,6 +2,7 @@ package it.planner.travel.domain.entity;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -26,6 +27,8 @@ import lombok.NoArgsConstructor;
 public class Travel extends BaseEntity {
 
     // Aggiungere lo uuid user
+    @Column(name = "user_uuid")
+    private UUID uuidUser;
 
     @Column(name = "name")
     private String name;

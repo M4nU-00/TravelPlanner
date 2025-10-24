@@ -1,6 +1,6 @@
 package it.planner.travel.domain.dto.request;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import jakarta.validation.constraints.NotNull;
@@ -27,7 +27,7 @@ public class TripStopRequestDto {
     String nameCity;
 
     @NotNull(message = "tripStopDate must not be null")
-    LocalDateTime tripStopDate;
+    LocalDate tripStopDate;
 
     String note;
 

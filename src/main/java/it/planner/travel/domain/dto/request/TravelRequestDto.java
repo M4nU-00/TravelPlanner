@@ -25,4 +25,5 @@ public class TravelRequestDto {
 
     @NotNull(message = "End date must not be null")
     private LocalDate endDate;
+
 }

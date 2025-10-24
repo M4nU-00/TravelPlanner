@@ -1,6 +1,6 @@
 package it.planner.travel.domain.dto.response;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,7 +20,7 @@ public class TripStopResponseDto {
     UUID uuidTripStop;
     String nameTripStop;
     String nameCity;
-    LocalDateTime tripStopDate;
+    LocalDate tripStopDate;
     String note;
     UUID uuidTravel;
 

@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import it.planner.travel.domain.dto.UserResponseDto;
 import it.planner.travel.domain.dto.request.TravelRequestDto;
 import it.planner.travel.domain.dto.response.InterestPointResponseDto;
 import it.planner.travel.domain.dto.response.TravelFullResponseDto;
@@ -15,10 +16,12 @@ import it.planner.travel.domain.dto.response.TripStopResponseDto;
 import it.planner.travel.domain.entity.InterestPoint;
 import it.planner.travel.domain.entity.Travel;
 import it.planner.travel.domain.entity.TripStop;
+import it.planner.travel.domain.util.JwtUtil;
 import it.planner.travel.exception.ObjectNotFoundException;
 import it.planner.travel.exception.base.BaseException;
 import it.planner.travel.repository.TravelRepository;
 import it.planner.travel.service.TravelService;
+import it.planner.travel.service.restservice.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,11 +36,35 @@ public class TravelServiceImpl implements TravelService {
     // ModelMapper
     private final ModelMapper modelMapper;
 
+    // User Service esterno
+    private final UserService userService;
+
+    // JwtUtil
+    private final JwtUtil jwtUtil;
+
     @Override
-    public TravelResponseDto createTravel(TravelRequestDto travelRequestDto) {
+    public TravelResponseDto createTravel(TravelRequestDto travelRequestDto, String token) {
+
+        // Check UserService
+        String username = jwtUtil.extractUsername(token);
+
+        UserResponseDto userResponseDto = userService.getUserProfile(token);
+
+        if (!username.equals(userResponseDto.getUsername())) {
+            // errore
+        }
+
+        Travel travel = Travel.builder()
+                .startDate(travelRequestDto.getStartDate())
+                .name(travelRequestDto.getName())
+                .endDate(travelRequestDto.getEndDate())
+                .uuidUser(userResponseDto.getUuidUser())
+                .build();
+
+        travel = insert(travel);
+
         return modelMapper
-                .map(insert(modelMapper
-                        .map(travelRequestDto, Travel.class)), TravelResponseDto.class);
+                .map(travel, TravelResponseDto.class);
     }
 
     @Override
