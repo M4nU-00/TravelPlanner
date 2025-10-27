@@ -44,6 +44,9 @@ public class TripStop extends BaseEntity {
     @Column(name = "note")
     private String note;
 
+    @Column(name = "country_code")
+    private String countryCode;
+
     @OneToMany(mappedBy = "tripStop")
     @JsonIgnore
     List<InterestPoint> interestPointList;

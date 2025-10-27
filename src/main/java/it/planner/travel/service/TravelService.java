@@ -17,12 +17,13 @@ public interface TravelService {
 
     public TravelResponseDto createTravel(TravelRequestDto travelRequestDto, String token);
 
-    public TravelResponseDto findByUuid(UUID uuid) throws BaseException;
+    public TravelFullResponseDto findByUuidAndUuidUser(UUID uuid, String token) throws BaseException;
 
-    public List<TravelFullResponseDto> findAll();
+    public List<TravelFullResponseDto> findAllByUuidUser(String token) throws BaseException;
 
-    public TravelResponseDto updateTravel(UUID uuid, TravelRequestDto travelRequestDto) throws BaseException;
+    public TravelResponseDto updateTravel(UUID uuid, TravelRequestDto travelRequestDto, String token)
+            throws BaseException;
 
-    public void deleteTravel(UUID uuid) throws BaseException;
+    public void deleteTravel(UUID uuid, String token) throws BaseException;
 
 }

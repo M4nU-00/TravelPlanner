@@ -10,11 +10,13 @@ import it.planner.travel.domain.dto.request.TripStopRequestDto;
 import it.planner.travel.domain.dto.response.TripStopResponseDto;
 import it.planner.travel.domain.entity.Travel;
 import it.planner.travel.domain.entity.TripStop;
+import it.planner.travel.domain.util.CountryCodeMapUtil;
 import it.planner.travel.exception.ObjectNotFoundException;
 import it.planner.travel.exception.base.BaseException;
 import it.planner.travel.repository.TripStopRepository;
 import it.planner.travel.service.TravelService;
 import it.planner.travel.service.TripStopService;
+import it.planner.travel.service.restservice.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,13 +35,15 @@ public class TripStopServiceImpl implements TripStopService {
     private final ModelMapper modelMapper;
 
     @Override
-    public TripStopResponseDto createTripStop(TripStopRequestDto tripStopRequestDto) throws BaseException {
+    public TripStopResponseDto createTripStop(TripStopRequestDto tripStopRequestDto, String token)
+            throws BaseException {
 
         // Fare una chiamata esterna per verificare se esiste la città passata
         String nameCity = tripStopRequestDto.getNameCity();
 
         // Verifico se il travel passato esiste
-        Travel travel = modelMapper.map(travelService.findByUuid(tripStopRequestDto.getUuidTravel()), Travel.class);
+        Travel travel = modelMapper.map(travelService.findByUuidAndUuidUser(tripStopRequestDto.getUuidTravel(), token),
+                Travel.class);
 
         // Creo l'oggetto TripStop
         TripStop tripStop = TripStop
@@ -49,6 +53,7 @@ public class TripStopServiceImpl implements TripStopService {
                 .note(tripStopRequestDto.getNote())
                 .travel(travel)
                 .tripStopDate(tripStopRequestDto.getTripStopDate())
+                .countryCode(CountryCodeMapUtil.getCountryCode(tripStopRequestDto.getCountryName()))
                 .build();
 
         return modelMapper
@@ -75,7 +80,7 @@ public class TripStopServiceImpl implements TripStopService {
     }
 
     @Override
-    public TripStopResponseDto updateTripStop(UUID uuid, TripStopRequestDto tripStopRequestDto) throws BaseException {
+    public TripStopResponseDto updateTripStop(UUID uuid, TripStopRequestDto tripStopRequestDto, String token) throws BaseException {
         TripStop tripStop = modelMapper.map(findByUuid(uuid), TripStop.class);
 
         // Aggiorna i campi
@@ -88,7 +93,7 @@ public class TripStopServiceImpl implements TripStopService {
         tripStop.setTripStopDate(tripStopRequestDto.getTripStopDate());
 
         // Verifico se esiste il travel
-        Travel travel = modelMapper.map(travelService.findByUuid(tripStopRequestDto.getUuidTravel()), Travel.class);
+        Travel travel = modelMapper.map(travelService.findByUuidAndUuidUser(tripStopRequestDto.getUuidTravel(), token), Travel.class);
         tripStop.setTravel(travel);
 
         // Aggiorno la data

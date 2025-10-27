@@ -35,23 +35,31 @@ public class TravelController {
     }
 
     @GetMapping("/{uuid}")
-    public TravelResponseDto getTravelByUuid(@PathVariable UUID uuid) throws BaseException {
-        return travelService.findByUuid(uuid);
+    public TravelFullResponseDto getTravelByUuid(@PathVariable UUID uuid, @RequestHeader("Authorization") String authHeader)
+            throws BaseException {
+        String token = authHeader.replace("Bearer ", "");
+        return travelService.findByUuidAndUuidUser(uuid, token);
     }
 
     @GetMapping
-    public List<TravelFullResponseDto> getAllTravels() {
-        return travelService.findAll();
+    public List<TravelFullResponseDto> getAllTravels(@RequestHeader("Authorization") String authHeader)
+            throws BaseException {
+        String token = authHeader.replace("Bearer ", "");
+        return travelService.findAllByUuidUser(token);
     }
 
     @PutMapping("/{uuid}")
     public TravelResponseDto updateTravel(@PathVariable UUID uuid,
-            @RequestBody TravelRequestDto travelRequestDto) throws BaseException {
-        return travelService.updateTravel(uuid, travelRequestDto);
+            @RequestBody TravelRequestDto travelRequestDto, @RequestHeader("Authorization") String authHeader)
+            throws BaseException {
+        String token = authHeader.replace("Bearer ", "");
+        return travelService.updateTravel(uuid, travelRequestDto, token);
     }
 
     @DeleteMapping("/{uuid}")
-    public void deleteTravel(@PathVariable UUID uuid) throws BaseException {
-        travelService.deleteTravel(uuid);
+    public void deleteTravel(@PathVariable UUID uuid, @RequestHeader("Authorization") String authHeader)
+            throws BaseException {
+        String token = authHeader.replace("Bearer ", "");
+        travelService.deleteTravel(uuid, token);
     }
 }

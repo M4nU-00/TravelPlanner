@@ -13,9 +13,9 @@ import it.planner.travel.domain.entity.Travel;
 public interface TravelRepository extends JpaRepository<Travel, UUID> {
 
     // FindAll degli elementi non cancellati
-    List<Travel> findAllByDeleteDateIsNull();
+    List<Travel> findAllByUuidUserAndDeleteDateIsNull(UUID uuidUser);
 
     // FindById degli elementi non cancellati
-    Optional<Travel> findByUuidAndDeleteDateIsNull(UUID uuid);
+    Optional<Travel> findByUuidAndUuidUserAndDeleteDateIsNull(UUID uuid, UUID uuidUser);
 
 }

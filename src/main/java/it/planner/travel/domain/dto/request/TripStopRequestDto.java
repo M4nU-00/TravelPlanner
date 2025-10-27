@@ -29,6 +29,9 @@ public class TripStopRequestDto {
     @NotNull(message = "tripStopDate must not be null")
     LocalDate tripStopDate;
 
+    @NotNull(message = "CountryCode must not be null")
+    String countryName;
+
     String note;
 
 }

@@ -3,6 +3,7 @@ package it.planner.travel.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,6 @@ import it.planner.travel.domain.dto.response.InterestPointResponseDto;
 import it.planner.travel.domain.dto.response.TravelFullResponseDto;
 import it.planner.travel.domain.dto.response.TravelResponseDto;
 import it.planner.travel.domain.dto.response.TripStopResponseDto;
-import it.planner.travel.domain.entity.InterestPoint;
 import it.planner.travel.domain.entity.Travel;
 import it.planner.travel.domain.entity.TripStop;
 import it.planner.travel.domain.util.JwtUtil;
@@ -68,59 +68,41 @@ public class TravelServiceImpl implements TravelService {
     }
 
     @Override
-    public TravelResponseDto findByUuid(UUID uuid) throws BaseException {
-        TravelResponseDto travelResponseDto = modelMapper
-                .map(travelRepository.findByUuidAndDeleteDateIsNull(uuid)
-                        .orElseThrow(() -> new ObjectNotFoundException("Travel", uuid)), TravelResponseDto.class);
-        log.info("Oggetto trovato {}", travelResponseDto);
-        return travelResponseDto;
-    }
+    public TravelFullResponseDto findByUuidAndUuidUser(UUID uuid, String token) throws BaseException {
+        // Verifico se l'utente esiste
+        UUID uuidUser = userService.getUserProfile(token) != null ? userService.getUserProfile(token).getUuidUser()
+                : null;
 
-    @Override
-    public List<TravelFullResponseDto> findAll() {
-        List<Travel> travels = travelRepository.findAllByDeleteDateIsNull();
-        List<TravelFullResponseDto> travelFullResponseDtos = new ArrayList<>();
-
-        for (Travel ithTravel : travels) {
-            TravelFullResponseDto travelFullResponseDto = new TravelFullResponseDto();
-            travelFullResponseDto.setName(ithTravel.getName());
-            travelFullResponseDto.setStartDate(ithTravel.getStartDate());
-            travelFullResponseDto.setEndDate(ithTravel.getEndDate());
-            travelFullResponseDto.setUuid(ithTravel.getUuid());
-
-            List<TripStopResponseDto> tripStopResponseDtos = new ArrayList<>();
-
-            for (TripStop ithTripStop : ithTravel.getTripStopList()) {
-                TripStopResponseDto tripStopResponseDto = new TripStopResponseDto();
-                tripStopResponseDto.setNameCity(ithTripStop.getNameCity());
-                tripStopResponseDto.setNameTripStop(ithTripStop.getName());
-                tripStopResponseDto.setUuidTravel(ithTravel.getUuid());
-                tripStopResponseDto.setUuidTripStop(ithTripStop.getUuid());
-                tripStopResponseDto.setTripStopDate(ithTripStop.getTripStopDate());
-                tripStopResponseDto.setNote(ithTripStop.getNote());
-
-                List<InterestPointResponseDto> interestPointResponseDtos = new ArrayList<>();
-
-                for (InterestPoint ithInterestPoint : ithTripStop.getInterestPointList()) {
-                    InterestPointResponseDto interestPointResponseDto = new InterestPointResponseDto();
-                    interestPointResponseDto.setName(ithInterestPoint.getName());
-                    interestPointResponseDtos.add(interestPointResponseDto);
-                }
-
-                tripStopResponseDto.setInterestPointList(interestPointResponseDtos);
-                tripStopResponseDtos.add(tripStopResponseDto);
-            }
-
-            travelFullResponseDto.setTripStopResponseList(tripStopResponseDtos);
-            travelFullResponseDtos.add(travelFullResponseDto);
+        if (uuidUser == null) {
+            // Lanciare un eccezione
         }
 
-        return travelFullResponseDtos;
+        Travel travel = travelRepository.findByUuidAndUuidUserAndDeleteDateIsNull(uuid, uuidUser)
+                .orElseThrow(() -> new ObjectNotFoundException("Travel", uuid));
+
+        TravelFullResponseDto dto = buildTravelFullResponseDto(travel);
+        log.info("Oggetto trovato {}", dto);
+        return dto;
     }
 
     @Override
-    public TravelResponseDto updateTravel(UUID uuid, TravelRequestDto travelRequestDto) throws BaseException {
-        Travel travel = modelMapper.map(findByUuid(uuid), Travel.class);
+    public List<TravelFullResponseDto> findAllByUuidUser(String token) throws BaseException {
+        UUID uuidUser = userService.getUserProfile(token) != null ? userService.getUserProfile(token).getUuidUser()
+                : null;
+
+        if (uuidUser == null) {
+            // Lanciare un eccezione
+        }
+        List<Travel> travels = travelRepository.findAllByUuidUserAndDeleteDateIsNull(uuidUser);
+        return travels.stream()
+                .map(this::buildTravelFullResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public TravelResponseDto updateTravel(UUID uuid, TravelRequestDto travelRequestDto, String token)
+            throws BaseException {
+        Travel travel = modelMapper.map(findByUuidAndUuidUser(uuid, token), Travel.class);
 
         // Aggiorna i campi
         travel.setName(travelRequestDto.getName());
@@ -133,8 +115,8 @@ public class TravelServiceImpl implements TravelService {
     }
 
     @Override
-    public void deleteTravel(UUID uuid) throws BaseException {
-        Travel travel = modelMapper.map(findByUuid(uuid), Travel.class);
+    public void deleteTravel(UUID uuid, String token) throws BaseException {
+        Travel travel = modelMapper.map(findByUuidAndUuidUser(uuid, token), Travel.class);
         travel.softDelete();
         log.info("Oggetto eliminato logicamente {}");
     }
@@ -144,6 +126,39 @@ public class TravelServiceImpl implements TravelService {
         travel = travelRepository.save(travel);
         log.info("Inserimento nuovo viaggio {}", travel);
         return travel;
+    }
+
+    private TravelFullResponseDto buildTravelFullResponseDto(Travel travel) {
+        TravelFullResponseDto dto = new TravelFullResponseDto();
+        dto.setName(travel.getName());
+        dto.setStartDate(travel.getStartDate());
+        dto.setEndDate(travel.getEndDate());
+        dto.setUuid(travel.getUuid());
+
+        List<TripStopResponseDto> tripStopDtos = new ArrayList<>();
+        for (TripStop tripStop : travel.getTripStopList()) {
+            TripStopResponseDto tripStopDto = new TripStopResponseDto();
+            tripStopDto.setNameCity(tripStop.getNameCity());
+            tripStopDto.setNameTripStop(tripStop.getName());
+            tripStopDto.setUuidTravel(travel.getUuid());
+            tripStopDto.setUuidTripStop(tripStop.getUuid());
+            tripStopDto.setTripStopDate(tripStop.getTripStopDate());
+            tripStopDto.setNote(tripStop.getNote());
+
+            List<InterestPointResponseDto> interestPointDtos = tripStop.getInterestPointList().stream()
+                    .map(interestPointDto -> {
+                        InterestPointResponseDto ipDto = new InterestPointResponseDto();
+                        ipDto.setName(interestPointDto.getName());
+                        return ipDto;
+                    })
+                    .collect(Collectors.toList());
+
+            tripStopDto.setInterestPointList(interestPointDtos);
+            tripStopDtos.add(tripStopDto);
+        }
+
+        dto.setTripStopResponseList(tripStopDtos);
+        return dto;
     }
 
 }

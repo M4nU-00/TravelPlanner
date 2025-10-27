@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,8 +27,10 @@ public class TripStopController {
     private final TripStopService tripStopService;
 
     @PostMapping
-    public TripStopResponseDto createTripStop(@RequestBody TripStopRequestDto tripStopRequestDto) throws BaseException {
-        return tripStopService.createTripStop(tripStopRequestDto);
+    public TripStopResponseDto createTripStop(@RequestBody TripStopRequestDto tripStopRequestDto,
+            @RequestHeader("Authorization") String authHeader) throws BaseException {
+        String token = authHeader.replace("Bearer ", "");
+        return tripStopService.createTripStop(tripStopRequestDto, token);
     }
 
     @GetMapping("/{uuid}")
@@ -42,8 +45,10 @@ public class TripStopController {
 
     @PutMapping("/{uuid}")
     public TripStopResponseDto updateTripStop(@PathVariable UUID uuid,
-                                              @RequestBody TripStopRequestDto tripStopRequestDto) throws BaseException {
-        return tripStopService.updateTripStop(uuid, tripStopRequestDto);
+            @RequestBody TripStopRequestDto tripStopRequestDto, @RequestHeader("Authorization") String authHeader)
+            throws BaseException {
+        String token = authHeader.replace("Bearer ", "");
+        return tripStopService.updateTripStop(uuid, tripStopRequestDto, token);
     }
 
     @DeleteMapping("/{uuid}")

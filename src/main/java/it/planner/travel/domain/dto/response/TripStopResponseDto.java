@@ -23,6 +23,7 @@ public class TripStopResponseDto {
     LocalDate tripStopDate;
     String note;
     UUID uuidTravel;
+    String countryCode;
 
     List<InterestPointResponseDto> interestPointList;
 }

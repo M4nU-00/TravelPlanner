@@ -14,13 +14,14 @@ import jakarta.transaction.Transactional;
 @Transactional
 public interface TripStopService {
 
-    public TripStopResponseDto createTripStop(TripStopRequestDto TripStopRequestDto) throws BaseException;
+    public TripStopResponseDto createTripStop(TripStopRequestDto TripStopRequestDto, String token) throws BaseException;
 
     public TripStopResponseDto findByUuid(UUID uuid) throws BaseException;
 
     public List<TripStopResponseDto> findAll();
 
-    public TripStopResponseDto updateTripStop(UUID uuid, TripStopRequestDto TripStopRequestDto) throws BaseException;
+    public TripStopResponseDto updateTripStop(UUID uuid, TripStopRequestDto TripStopRequestDto, String token)
+            throws BaseException;
 
     public void deleteTripStop(UUID uuid) throws BaseException;
 
