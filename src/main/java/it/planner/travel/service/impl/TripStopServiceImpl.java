@@ -16,7 +16,6 @@ import it.planner.travel.exception.base.BaseException;
 import it.planner.travel.repository.TripStopRepository;
 import it.planner.travel.service.TravelService;
 import it.planner.travel.service.TripStopService;
-import it.planner.travel.service.restservice.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
